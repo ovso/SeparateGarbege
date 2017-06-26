@@ -32,6 +32,7 @@ public class MainActivity extends AppCompatActivity implements OnAdapterItemClic
   @BindView(R.id.scale_button) Button mScaleButton;
   private DiscreteScrollView mScrollView;
   private MainItem mCurrentMainItem;
+  private DatabaseReference mReference;
 
   @Override protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
@@ -49,10 +50,9 @@ public class MainActivity extends AppCompatActivity implements OnAdapterItemClic
             mCurrentMainItem = adapter.getItem(adapterPosition);
           }
         });
-    DatabaseReference reference =
-        FirebaseDatabase.getInstance("https://separategarbege.firebaseio.com/")
-            .getReference("separate");
-    reference.addValueEventListener(new ValueEventListener() {
+    mReference = FirebaseDatabase.getInstance("https://separategarbege.firebaseio.com/")
+        .getReference("separate");
+    mReference.addValueEventListener(new ValueEventListener() {
       @Override public void onDataChange(DataSnapshot dataSnapshot) {
         final ArrayList<MainItem> mainItems = new ArrayList<>();
         for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
@@ -94,6 +94,7 @@ public class MainActivity extends AppCompatActivity implements OnAdapterItemClic
   @Override protected void onDestroy() {
     super.onDestroy();
     mUnbinder.unbind();
+    mReference.onDisconnect();
   }
 
   public void setAdapterItems(ArrayList<MainItem> adapterItems) {
