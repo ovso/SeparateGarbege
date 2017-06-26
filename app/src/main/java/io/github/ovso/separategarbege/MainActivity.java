@@ -10,7 +10,6 @@ import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
-import android.widget.ProgressBar;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
@@ -20,6 +19,7 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.wang.avi.AVLoadingIndicatorView;
 import com.yarolegovich.discretescrollview.DiscreteScrollView;
 import com.yarolegovich.discretescrollview.transform.ScaleTransformer;
 import java.util.ArrayList;
@@ -116,15 +116,15 @@ public class MainActivity extends AppCompatActivity implements OnAdapterItemClic
     return items;
   }
 
-  @BindView(R.id.loading_progressbar) ProgressBar mProgressBar;
+  @BindView(R.id.loading_avi) AVLoadingIndicatorView mLoadingView;
 
   private void showProgress() {
-    mProgressBar.setVisibility(View.VISIBLE);
+    mLoadingView.show();
     disableButton();
   }
 
   private void hideProgress() {
-    mProgressBar.setVisibility(View.GONE);
+    mLoadingView.hide();
     enableButton();
   }
 
