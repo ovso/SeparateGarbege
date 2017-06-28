@@ -10,7 +10,6 @@ import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
-import android.widget.ProgressBar;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
@@ -20,6 +19,7 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.wang.avi.AVLoadingIndicatorView;
 import com.yarolegovich.discretescrollview.DiscreteScrollView;
 import com.yarolegovich.discretescrollview.transform.ScaleTransformer;
 import java.util.ArrayList;
@@ -32,6 +32,7 @@ public class MainActivity extends AppCompatActivity implements OnAdapterItemClic
   @BindView(R.id.scale_button) Button mScaleButton;
   private DiscreteScrollView mScrollView;
   private MainItem mCurrentMainItem;
+  private DatabaseReference mReference;
 
   @Override protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
@@ -49,10 +50,9 @@ public class MainActivity extends AppCompatActivity implements OnAdapterItemClic
             mCurrentMainItem = adapter.getItem(adapterPosition);
           }
         });
-    DatabaseReference reference =
-        FirebaseDatabase.getInstance("https://separategarbege.firebaseio.com/")
-            .getReference("separate");
-    reference.addValueEventListener(new ValueEventListener() {
+    mReference = FirebaseDatabase.getInstance("https://separategarbege.firebaseio.com/")
+        .getReference("separate");
+    mReference.addValueEventListener(new ValueEventListener() {
       @Override public void onDataChange(DataSnapshot dataSnapshot) {
         final ArrayList<MainItem> mainItems = new ArrayList<>();
         for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
@@ -94,6 +94,7 @@ public class MainActivity extends AppCompatActivity implements OnAdapterItemClic
   @Override protected void onDestroy() {
     super.onDestroy();
     mUnbinder.unbind();
+    mReference.onDisconnect();
   }
 
   public void setAdapterItems(ArrayList<MainItem> adapterItems) {
@@ -116,15 +117,15 @@ public class MainActivity extends AppCompatActivity implements OnAdapterItemClic
     return items;
   }
 
-  @BindView(R.id.loading_progressbar) ProgressBar mProgressBar;
+  @BindView(R.id.loading_avi) AVLoadingIndicatorView mLoadingView;
 
   private void showProgress() {
-    mProgressBar.setVisibility(View.VISIBLE);
+    mLoadingView.show();
     disableButton();
   }
 
   private void hideProgress() {
-    mProgressBar.setVisibility(View.GONE);
+    mLoadingView.hide();
     enableButton();
   }
 
