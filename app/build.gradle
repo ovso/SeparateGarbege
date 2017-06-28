@@ -16,6 +16,8 @@ android {
       minifyEnabled true
       proguardFile getDefaultProguardFile('proguard-android.txt')
       proguardFile 'proguard-avi.pro'
+      proguardFile 'proguard-lombok.pro'
+      proguardFile 'proguard-project.pro'
     }
   }
 }
